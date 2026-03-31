@@ -5,7 +5,7 @@ import TopNav from "./components/TopNav";
 import QuestionCard from "./components/QuestionCard";
 import StatsPanel from "./components/StatsPanel";
 import { Language, UserState, LessonStep, Topic, Game } from "./types";
-import { TOPICS, ALGEBRA_LESSON, GAMES } from "./tutorContent";
+import { TOPICS, ALGEBRA_LESSON, BIOLOGY_LESSON, PHYSICS_LESSON, GAMES } from "./tutorContent";
 import { Lock, ArrowRight, CheckCircle2, Mail, Trophy, Gamepad2, Share2, Timer, Bolt, SpellCheck, Layers } from "lucide-react";
 
 export default function App() {
@@ -14,7 +14,7 @@ export default function App() {
     level: 1,
     badges: [],
     language: "english", // Default to English
-    unlockedTopics: ["algebra"],
+    unlockedTopics: ["algebra", "biology", "physics"],
     completedLevels: [],
     hasCompletedOnboarding: false,
   });
@@ -37,12 +37,20 @@ export default function App() {
 
   const currentTopic = useMemo(() => TOPICS.find(t => t.id === currentTopicId), [currentTopicId]);
   const currentLessonSteps = useMemo(() => {
-    const rawSteps = ALGEBRA_LESSON[user.level] || [];
+    let rawSteps: LessonStep[] = [];
+    if (currentTopicId === "algebra") {
+      rawSteps = ALGEBRA_LESSON[user.level] || [];
+    } else if (currentTopicId === "biology") {
+      rawSteps = BIOLOGY_LESSON[user.level] || [];
+    } else if (currentTopicId === "physics") {
+      rawSteps = PHYSICS_LESSON[user.level] || [];
+    }
+    
     if (user.language === "english") {
       return rawSteps.filter(s => s.type !== "reinforcement");
     }
     return rawSteps;
-  }, [user.level, user.language]);
+  }, [user.level, user.language, currentTopicId]);
   const currentStep = currentLessonSteps[stepIndex];
 
   const handleLanguageSelect = (lang: Language) => {
@@ -278,36 +286,51 @@ export default function App() {
                     key={topic.id}
                     whileHover={{ y: -8 }}
                     onClick={() => handleTopicSelect(topic.id)}
-                    className={`relative p-8 rounded-[2.5rem] border-4 transition-all cursor-pointer overflow-hidden group ${
+                    className={`relative rounded-[2.5rem] border-4 transition-all cursor-pointer overflow-hidden group flex flex-col ${
                       topic.isLocked 
                         ? "bg-surface-container/50 border-outline-variant grayscale" 
                         : "bg-white border-primary/10 hover:border-primary shadow-xl shadow-primary/5"
                     }`}
                   >
-                    <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 ${topic.isLocked ? "bg-outline/10" : "bg-primary/10"}`}>
-                      <span className={`material-symbols-outlined text-3xl ${topic.isLocked ? "text-outline" : "text-primary"}`}>
-                        {topic.icon}
-                      </span>
-                    </div>
-                    <h3 className="text-2xl font-headline font-black text-on-surface mb-2">{topic.title}</h3>
-                    <p className="text-sm text-outline mb-6">
-                      {topic.isLocked ? "Coming soon to STEM Lab!" : "Master the basics of variables and equations."}
-                    </p>
-                    
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-black uppercase tracking-widest text-primary">
-                        {topic.isLocked ? "Locked" : "Unlocked"}
-                      </span>
-                      {!topic.isLocked && (
-                        <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
-                          <ArrowRight className="w-5 h-5" />
+                    {/* Topic Image */}
+                    <div className="h-48 w-full relative overflow-hidden">
+                      <img 
+                        src={topic.image} 
+                        alt={topic.title}
+                        className="w-full h-full object-cover transition-transform group-hover:scale-110"
+                        referrerPolicy="no-referrer"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                      <div className="absolute bottom-4 left-6 flex items-center gap-3">
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${topic.isLocked ? "bg-white/20" : "bg-primary"}`}>
+                          <span className="material-symbols-outlined text-white text-xl">
+                            {topic.icon}
+                          </span>
                         </div>
-                      )}
+                        <h3 className="text-xl font-headline font-black text-white">{topic.title}</h3>
+                      </div>
+                    </div>
+
+                    <div className="p-6 flex-grow flex flex-col">
+                      <p className="text-sm text-outline mb-6 flex-grow">
+                        {topic.isLocked ? "Coming soon to STEM Lab!" : topic.description}
+                      </p>
+                      
+                      <div className="flex items-center justify-between mt-auto">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-primary">
+                          {topic.isLocked ? "Locked" : "Unlocked"}
+                        </span>
+                        {!topic.isLocked && (
+                          <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
+                            <ArrowRight className="w-5 h-5" />
+                          </div>
+                        )}
+                      </div>
                     </div>
 
                     {topic.isLocked && (
-                      <div className="absolute top-4 right-4">
-                        <Lock className="w-5 h-5 text-outline" />
+                      <div className="absolute top-4 right-4 bg-black/40 backdrop-blur-md p-2 rounded-full">
+                        <Lock className="w-4 h-4 text-white" />
                       </div>
                     )}
                   </motion.div>

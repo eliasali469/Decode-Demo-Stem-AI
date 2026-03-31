@@ -1,14 +1,147 @@
 import { Language, LessonStep, Game } from "./types";
 
 export const TOPICS = [
-  { id: "algebra", title: "Algebra Basics", icon: "calculate", isLocked: false },
-  { id: "geometry", title: "Geometry", icon: "square", isLocked: true },
-  { id: "probability", title: "Probability", icon: "casino", isLocked: true },
-  { id: "electricity", title: "Electricity", icon: "bolt", isLocked: true },
-  { id: "chemistry", title: "Chemistry", icon: "science", isLocked: true },
-  { id: "physics", title: "Physics Basics", icon: "speed", isLocked: true },
-  { id: "biology", title: "Biology Advanced", icon: "biotech", isLocked: true },
+  { 
+    id: "algebra", 
+    title: "Algebra Basics", 
+    icon: "calculate", 
+    isLocked: false,
+    image: "https://picsum.photos/seed/algebra/800/600",
+    description: "Master the basics of variables and equations."
+  },
+  { 
+    id: "biology", 
+    title: "Biology Basics", 
+    icon: "biotech", 
+    isLocked: false,
+    image: "https://picsum.photos/seed/biology/800/600",
+    description: "Explore the building blocks of life and cells."
+  },
+  { 
+    id: "geometry", 
+    title: "Geometry", 
+    icon: "square_foot", 
+    isLocked: true,
+    image: "https://picsum.photos/seed/geometry/800/600",
+    description: "Learn about shapes, angles, and spatial logic."
+  },
+  { 
+    id: "probability", 
+    title: "Probability", 
+    icon: "analytics", 
+    isLocked: true,
+    image: "https://picsum.photos/seed/probability/800/600",
+    description: "Understand chance and data predictions."
+  },
+  { 
+    id: "electricity", 
+    title: "Electricity", 
+    icon: "electric_bolt", 
+    isLocked: true,
+    image: "https://picsum.photos/seed/electricity/800/600",
+    description: "Discover the flow of energy and circuits."
+  },
+  { 
+    id: "chemistry", 
+    title: "Chemistry", 
+    icon: "science", 
+    isLocked: true,
+    image: "https://picsum.photos/seed/chemistry/800/600",
+    description: "Dive into atoms, molecules, and reactions."
+  },
+  { 
+    id: "physics", 
+    title: "Physics Basics", 
+    icon: "speed", 
+    isLocked: false,
+    image: "https://picsum.photos/seed/physics/800/600",
+    description: "Study force, motion, and the laws of nature."
+  },
 ];
+
+export const PHYSICS_LESSON: Record<number, LessonStep[]> = {
+  1: [
+    {
+      type: "challenge",
+      content: {
+        english: "Welcome to the Physics Lab! Let's talk about speed.",
+        mixed: "Welcome to the Physics Lab! Let's talk about speed.",
+        swahili: "Karibu kwenye Maabara ya Fizikia! Tuzungumzie kasi.",
+      },
+      question: {
+        text: "What is the formula for Speed?",
+        options: ["Distance / Time", "Time * 2", "Weight + 10", "Color / 5"],
+        correct: "Distance / Time",
+      },
+    },
+    {
+      type: "explanation",
+      content: {
+        english: "Physics is the study of how things move and interact. Speed is how much distance you cover in a certain amount of time.",
+        mixed: "Physics is the study of how things move and interact. Speed is how much distance you cover in a certain amount of time.",
+        swahili: "Fizikia ni utafiti wa jinsi vitu vinavyosonga na kuingiliana. Kasi ni umbali gani unaofunika kwa muda fulani.",
+      },
+    },
+    {
+      type: "analogy",
+      content: {
+        english: "Think of a matatu driving from Nairobi to Nakuru. If it covers 160km in 2 hours, its speed is 80km per hour!",
+        mixed: "Think of a matatu driving from Nairobi to Nakuru. If it covers 160km in 2 hours, its speed is 80km per hour!",
+        swahili: "Fikiria matatu inayoendesha kutoka Nairobi kwenda Nakuru. Ikiwa inashughulikia 160km kwa saa 2, kasi yake ni 80km kwa saa!",
+      },
+    },
+    {
+      type: "complete",
+      content: {
+        english: "Excellent! You've grasped the concept of speed. Ready for more physics?",
+        mixed: "Excellent! You've grasped the concept of speed. Ready for more physics?",
+        swahili: "Bora! Umeelewa dhana ya kasi. Je, uko tayari kwa fizikia zaidi?",
+      },
+    },
+  ],
+};
+
+export const BIOLOGY_LESSON: Record<number, LessonStep[]> = {
+  1: [
+    {
+      type: "challenge",
+      content: {
+        english: "Welcome to the Biology Lab! Let's start with a cell question.",
+        mixed: "Welcome to the Biology Lab! Let's start with a cell question.",
+        swahili: "Karibu kwenye Maabara ya Biolojia! Tuanze na swali la seli.",
+      },
+      question: {
+        text: "What is the 'brain' of the cell?",
+        options: ["Nucleus", "Wall", "Water", "Sun"],
+        correct: "Nucleus",
+      },
+    },
+    {
+      type: "explanation",
+      content: {
+        english: "Cells are the tiny building blocks of all living things. The Nucleus is like the control center that tells the cell what to do.",
+        mixed: "Cells are the tiny building blocks of all living things. The Nucleus is like the control center that tells the cell what to do.",
+        swahili: "Seli ni vijenzi vidogo vya viumbe vyote hai. Nyuklia ni kama kituo cha udhibiti kinachoambia seli nini cha kufanya.",
+      },
+    },
+    {
+      type: "analogy",
+      content: {
+        english: "Think of a cell like a busy village. The Nucleus is like the village chief's house where all the important decisions are made!",
+        mixed: "Think of a cell like a busy village. The Nucleus is like the village chief's house where all the important decisions are made!",
+        swahili: "Fikiria seli kama kijiji chenye shughuli nyingi. Nyuklia ni kama nyumba ya chifu wa kijiji ambapo maamuzi yote muhimu hufanywa!",
+      },
+    },
+    {
+      type: "complete",
+      content: {
+        english: "Fantastic! You've learned the basics of the cell. Ready for more?",
+        mixed: "Fantastic! You've learned the basics of the cell. Ready for more?",
+        swahili: "Ajabu! Umejifunza misingi ya seli. Je, uko tayari kwa zaidi?",
+      },
+    },
+  ],
+};
 
 export const ALGEBRA_LESSON: Record<number, LessonStep[]> = {
   1: [

@@ -16,6 +16,8 @@ export interface Topic {
   title: string;
   icon: string;
   isLocked: boolean;
+  image?: string;
+  description?: string;
 }
 
 export interface LessonStep {
