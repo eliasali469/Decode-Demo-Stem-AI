@@ -13,23 +13,29 @@ export default function App() {
     points: 0,
     level: 1,
     badges: [],
-    language: null,
+    language: "english", // Default to English
     unlockedTopics: ["algebra"],
     completedLevels: [],
+    hasCompletedOnboarding: false,
   });
 
-  const [currentTopicId, setCurrentTopicId] = useState("algebra");
+  const [currentTopicId, setCurrentTopicId] = useState<string | null>(null);
   const [stepIndex, setStepIndex] = useState(0);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showUpgrade, setShowUpgrade] = useState(false);
   const [showEmailCapture, setShowEmailCapture] = useState(false);
   const [activeGame, setActiveGame] = useState<Game | null>(null);
   const [challengeIndex, setChallengeIndex] = useState(0);
-  const [currentView, setCurrentView] = useState<"dashboard" | "games">("dashboard");
+  const [currentView, setCurrentView] = useState<"dashboard" | "games" | "onboarding" | "curriculum">("onboarding");
   const [scrambledInput, setScrambledInput] = useState("");
   const [selectedTerm, setSelectedTerm] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<{ isCorrect: boolean | null; message: string | null; show: boolean }>({
+    isCorrect: null,
+    message: null,
+    show: false
+  });
 
-  const currentTopic = useMemo(() => TOPICS.find(t => t.id === currentTopicId)!, [currentTopicId]);
+  const currentTopic = useMemo(() => TOPICS.find(t => t.id === currentTopicId), [currentTopicId]);
   const currentLessonSteps = useMemo(() => {
     const rawSteps = ALGEBRA_LESSON[user.level] || [];
     if (user.language === "english") {
@@ -52,25 +58,43 @@ export default function App() {
     setCurrentTopicId(topicId);
     setStepIndex(0);
     setActiveGame(null);
+    setCurrentView("dashboard");
   };
 
   const handleAnswer = (answer: string | boolean) => {
+    if (feedback.show) return;
+
     if (activeGame) {
       const gameContent = activeGame.content;
       let isCorrect = false;
+      let correctAnswer = "";
 
       if (activeGame.type === "speed-drill") {
         isCorrect = answer === gameContent[challengeIndex].correct;
+        correctAnswer = gameContent[challengeIndex].correct;
       } else if (activeGame.type === "true-false") {
         isCorrect = answer === gameContent[challengeIndex].correct;
+        correctAnswer = gameContent[challengeIndex].correct ? "TRUE" : "FALSE";
       } else if (activeGame.type === "word-scramble") {
         isCorrect = answer.toString().toUpperCase() === gameContent[challengeIndex].original;
+        correctAnswer = gameContent[challengeIndex].original;
       } else if (activeGame.type === "match-pair") {
         isCorrect = answer === gameContent[challengeIndex].definition;
+        correctAnswer = gameContent[challengeIndex].definition;
       }
+
+      setFeedback({
+        isCorrect,
+        message: isCorrect ? "Correct! Great job!" : `Incorrect. The right answer was: ${correctAnswer}`,
+        show: true
+      });
 
       if (isCorrect) {
         setUser(prev => ({ ...prev, points: prev.points + activeGame.pointsPerCorrect }));
+      }
+
+      setTimeout(() => {
+        setFeedback({ isCorrect: null, message: null, show: false });
         if (challengeIndex < gameContent.length - 1) {
           setChallengeIndex(prev => prev + 1);
           setScrambledInput("");
@@ -81,14 +105,29 @@ export default function App() {
           setScrambledInput("");
           setSelectedTerm(null);
         }
-      }
+      }, 2000);
       return;
     }
 
-    if (currentStep.question && answer === currentStep.question.correct) {
-      const pointsToAdd = user.level === 1 ? 10 : 15;
-      setUser(prev => ({ ...prev, points: prev.points + pointsToAdd }));
-      setStepIndex(prev => prev + 1);
+    if (currentStep?.question) {
+      const isCorrect = answer === currentStep.question.correct;
+      setFeedback({
+        isCorrect,
+        message: isCorrect ? "Correct! You're a STEM star!" : `Not quite. The correct answer is: ${currentStep.question.correct}`,
+        show: true
+      });
+
+      if (isCorrect) {
+        const pointsToAdd = user.level === 1 ? 10 : 15;
+        setUser(prev => ({ ...prev, points: prev.points + pointsToAdd }));
+      }
+
+      setTimeout(() => {
+        setFeedback({ isCorrect: null, message: null, show: false });
+        if (isCorrect) {
+          setStepIndex(prev => prev + 1);
+        }
+      }, 2000);
     }
   };
 
@@ -117,37 +156,83 @@ export default function App() {
     setIsSidebarOpen(false);
   };
 
-  if (!user.language) {
+  const [onboardingStep, setOnboardingStep] = useState(0);
+
+  const onboardingSteps = [
+    {
+      title: "Welcome to STEM Lab!",
+      description: "Your gamified journey into Science, Technology, Engineering, and Math starts here.",
+      icon: <Gamepad2 className="w-12 h-12 text-primary" />,
+      image: "https://picsum.photos/seed/stem1/800/600"
+    },
+    {
+      title: "Learn with Analogies",
+      description: "We explain complex concepts using local East African analogies you already know.",
+      icon: <Layers className="w-12 h-12 text-secondary" />,
+      image: "https://picsum.photos/seed/stem2/800/600"
+    },
+    {
+      title: "Earn Rewards",
+      description: "Collect points, unlock badges, and climb the leaderboard as you master new skills.",
+      icon: <Trophy className="w-12 h-12 text-tertiary" />,
+      image: "https://picsum.photos/seed/stem3/800/600"
+    }
+  ];
+
+  if (currentView === "onboarding") {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-6 kitenge-pattern">
         <motion.div 
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          className="bg-white p-8 md:p-12 rounded-3xl shadow-2xl max-w-lg w-full text-center border-4 border-primary/10"
+          key={onboardingStep}
+          initial={{ x: 20, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          exit={{ x: -20, opacity: 0 }}
+          className="bg-white p-8 md:p-12 rounded-[3rem] shadow-2xl max-w-2xl w-full text-center border-4 border-primary/5 overflow-hidden"
         >
-          <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Gamepad2 className="w-10 h-10 text-primary" />
+          <div className="relative mb-8 rounded-3xl overflow-hidden h-64">
+            <img 
+              src={onboardingSteps[onboardingStep].image} 
+              alt="Onboarding" 
+              className="w-full h-full object-cover"
+              referrerPolicy="no-referrer"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end justify-center pb-6">
+              <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-xl">
+                {onboardingSteps[onboardingStep].icon}
+              </div>
+            </div>
           </div>
-          <h1 className="text-3xl font-headline font-black text-on-surface mb-4">Karibu STEM Lab!</h1>
-          <p className="text-outline font-medium mb-8">Choose your preferred language to start learning.</p>
-          
-          <div className="space-y-4">
-            {[
-              { id: "english", label: "English Only", sub: "Standard learning mode" },
-              { id: "mixed", label: "English + Swahili/Sheng", sub: "Mchanganyiko wa lugha" },
-              { id: "swahili", label: "Swahili Only", sub: "Lugha ya Kiswahili pekee" },
-            ].map((lang) => (
-              <motion.button
-                key={lang.id}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => handleLanguageSelect(lang.id as Language)}
-                className="w-full p-4 rounded-2xl border-2 border-primary/10 hover:border-primary hover:bg-primary/5 transition-all text-left group"
-              >
-                <div className="font-headline font-bold text-on-surface group-hover:text-primary">{lang.label}</div>
-                <div className="text-xs text-outline">{lang.sub}</div>
-              </motion.button>
-            ))}
+
+          <h1 className="text-3xl md:text-4xl font-headline font-black text-on-surface mb-4">
+            {onboardingSteps[onboardingStep].title}
+          </h1>
+          <p className="text-outline font-medium text-lg mb-10 max-w-md mx-auto">
+            {onboardingSteps[onboardingStep].description}
+          </p>
+
+          <div className="flex items-center justify-between">
+            <div className="flex gap-2">
+              {onboardingSteps.map((_, i) => (
+                <div 
+                  key={i} 
+                  className={`h-2 rounded-full transition-all ${i === onboardingStep ? "w-8 bg-primary" : "w-2 bg-primary/20"}`}
+                />
+              ))}
+            </div>
+            <button 
+              onClick={() => {
+                if (onboardingStep < onboardingSteps.length - 1) {
+                  setOnboardingStep(prev => prev + 1);
+                } else {
+                  setCurrentView("curriculum");
+                  setUser(prev => ({ ...prev, hasCompletedOnboarding: true }));
+                }
+              }}
+              className="bg-primary text-white px-8 py-4 rounded-2xl font-headline font-black flex items-center gap-2 shadow-lg shadow-primary/20"
+            >
+              {onboardingStep === onboardingSteps.length - 1 ? "Get Started" : "Next"}
+              <ArrowRight className="w-5 h-5" />
+            </button>
           </div>
         </motion.div>
       </div>
@@ -169,20 +254,76 @@ export default function App() {
         onClose={() => setIsSidebarOpen(false)} 
         onTopicSelect={handleTopicSelect}
         onViewChange={setCurrentView}
-        currentTopicId={currentTopicId}
-        currentView={currentView}
+        currentTopicId={currentTopicId || ""}
+        currentView={currentView === "curriculum" ? "dashboard" : currentView}
       />
 
       <main className="md:ml-72 pt-20 md:pt-24 pb-24 px-4 md:px-6 min-h-screen kitenge-pattern">
         <div className="max-w-5xl mx-auto">
-          {currentView === "dashboard" ? (
+          {currentView === "curriculum" && (
+            <div className="space-y-8">
+              <section>
+                <span className="inline-block px-4 py-1 bg-primary text-white rounded-full font-headline font-bold text-[10px] md:text-xs uppercase tracking-widest mb-2">
+                  Pick Your Path
+                </span>
+                <h1 className="text-3xl md:text-5xl font-headline font-extrabold text-on-surface tracking-tight leading-tight">
+                  STEM Curriculum
+                </h1>
+                <p className="text-outline mt-2">Where do you want to start your journey today?</p>
+              </section>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {TOPICS.map((topic) => (
+                  <motion.div
+                    key={topic.id}
+                    whileHover={{ y: -8 }}
+                    onClick={() => handleTopicSelect(topic.id)}
+                    className={`relative p-8 rounded-[2.5rem] border-4 transition-all cursor-pointer overflow-hidden group ${
+                      topic.isLocked 
+                        ? "bg-surface-container/50 border-outline-variant grayscale" 
+                        : "bg-white border-primary/10 hover:border-primary shadow-xl shadow-primary/5"
+                    }`}
+                  >
+                    <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 ${topic.isLocked ? "bg-outline/10" : "bg-primary/10"}`}>
+                      <span className={`material-symbols-outlined text-3xl ${topic.isLocked ? "text-outline" : "text-primary"}`}>
+                        {topic.icon}
+                      </span>
+                    </div>
+                    <h3 className="text-2xl font-headline font-black text-on-surface mb-2">{topic.title}</h3>
+                    <p className="text-sm text-outline mb-6">
+                      {topic.isLocked ? "Coming soon to STEM Lab!" : "Master the basics of variables and equations."}
+                    </p>
+                    
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-primary">
+                        {topic.isLocked ? "Locked" : "Unlocked"}
+                      </span>
+                      {!topic.isLocked && (
+                        <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
+                          <ArrowRight className="w-5 h-5" />
+                        </div>
+                      )}
+                    </div>
+
+                    {topic.isLocked && (
+                      <div className="absolute top-4 right-4">
+                        <Lock className="w-5 h-5 text-outline" />
+                      </div>
+                    )}
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {currentView === "dashboard" && currentTopic && (
             <>
               {/* Header Section */}
               <section className="mb-8">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                   <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }}>
                     <span className="inline-block px-4 py-1 bg-tertiary text-on-tertiary rounded-full font-headline font-bold text-[10px] md:text-xs uppercase tracking-widest mb-2">
-                      Learning Path
+                      Curriculum
                     </span>
                     <h1 className="text-3xl md:text-5xl font-headline font-extrabold text-on-surface tracking-tight leading-tight">
                       {currentTopic.title}
@@ -219,6 +360,7 @@ export default function App() {
                     onNext={handleNextStep}
                     topicTitle={currentTopic.title}
                     level={user.level}
+                    feedback={feedback}
                   />
                 </div>
 
@@ -227,8 +369,10 @@ export default function App() {
                 </div>
               </div>
             </>
-          ) : (
-            <div className="space-y-8">
+          )}
+
+          {currentView === "games" && (
+            <>
               <section>
                 <span className="inline-block px-4 py-1 bg-secondary text-on-secondary rounded-full font-headline font-bold text-[10px] md:text-xs uppercase tracking-widest mb-2">
                   Arcade Mode
@@ -254,6 +398,21 @@ export default function App() {
                           Quit Game
                         </button>
                       </div>
+
+                      <AnimatePresence>
+                        {feedback.show && (
+                          <motion.div
+                            initial={{ opacity: 0, y: -20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            className={`mb-6 p-4 rounded-2xl font-headline font-black text-center shadow-lg ${
+                              feedback.isCorrect ? "bg-green-500 text-white" : "bg-red-500 text-white"
+                            }`}
+                          >
+                            {feedback.message}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
 
                       {activeGame.type === "speed-drill" && (
                         <>
@@ -465,7 +624,7 @@ export default function App() {
                   </div>
                 </div>
               </div>
-            </div>
+            </>
           )}
         </div>
       </main>

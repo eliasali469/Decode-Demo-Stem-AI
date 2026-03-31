@@ -59,7 +59,7 @@ export default function Sidebar({ isOpen, onClose, onTopicSelect, onViewChange, 
           ))}
         </nav>
 
-        <p className="px-4 text-[10px] font-black uppercase tracking-widest text-outline mb-4">Learning Path</p>
+        <p className="px-4 text-[10px] font-black uppercase tracking-widest text-outline mb-4">Curriculum</p>
         <nav className="space-y-1">
           {TOPICS.map((topic) => (
             <button

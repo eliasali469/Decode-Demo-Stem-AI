@@ -9,9 +9,10 @@ interface QuestionCardProps {
   onNext: () => void;
   topicTitle: string;
   level: number;
+  feedback: { isCorrect: boolean | null; message: string | null; show: boolean };
 }
 
-export default function QuestionCard({ step, language, onAnswer, onNext, topicTitle, level }: QuestionCardProps) {
+export default function QuestionCard({ step, language, onAnswer, onNext, topicTitle, level, feedback }: QuestionCardProps) {
   const content = step.content[language] || step.content['english'];
   
   return (
@@ -54,12 +55,36 @@ export default function QuestionCard({ step, language, onAnswer, onNext, topicTi
                       whileHover={{ y: -4 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => onAnswer(opt)}
-                      className="group relative bg-surface-container hover:bg-primary-container p-4 md:p-6 rounded-xl text-center transition-all border-b-4 border-outline-variant hover:border-primary"
+                      disabled={feedback.show}
+                      className={`group relative p-4 md:p-6 rounded-xl text-center transition-all border-b-4 ${
+                        feedback.show && opt === step.question?.correct
+                          ? "bg-green-100 border-green-500 text-green-700"
+                          : feedback.show && opt !== step.question?.correct
+                          ? "bg-red-50 border-red-200 text-red-300 opacity-50"
+                          : "bg-surface-container hover:bg-primary-container border-outline-variant hover:border-primary"
+                      }`}
                     >
-                      <span className="block font-headline font-black text-2xl md:text-3xl text-primary">{opt}</span>
+                      <span className={`block font-headline font-black text-2xl md:text-3xl ${
+                        feedback.show && opt === step.question?.correct ? "text-green-700" : "text-primary"
+                      }`}>{opt}</span>
                     </motion.button>
                   ))}
                 </div>
+
+                <AnimatePresence>
+                  {feedback.show && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className={`mt-6 p-4 rounded-xl font-bold text-center ${
+                        feedback.isCorrect ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+                      }`}
+                    >
+                      {feedback.message}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             )}
 

@@ -36,7 +36,7 @@ export default function TopNav({ points, currentLanguage, onLanguageChange, onMe
         <nav className="flex gap-6">
           <a className="text-on-surface hover:text-primary transition-colors font-headline font-bold text-sm" href="#">Home</a>
           <a className="text-on-surface hover:text-primary transition-colors font-headline font-bold text-sm" href="#">Leaderboard</a>
-          <a className="text-primary font-extrabold font-headline text-sm" href="#">Mini-Games</a>
+          <a className="text-on-surface hover:text-primary transition-colors font-headline font-bold text-sm" href="#">Mini-Games</a>
         </nav>
       </div>
 

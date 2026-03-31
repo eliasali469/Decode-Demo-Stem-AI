@@ -8,6 +8,7 @@ export interface UserState {
   unlockedTopics: string[];
   completedLevels: number[];
   email?: string;
+  hasCompletedOnboarding: boolean;
 }
 
 export interface Topic {
