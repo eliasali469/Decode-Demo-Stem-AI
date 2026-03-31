@@ -140,6 +140,8 @@ export default function App() {
   };
 
   const handleNextStep = () => {
+    if (!currentStep) return;
+
     if (currentStep.type === "complete") {
       if (user.level === 1) {
         setUser(prev => ({ ...prev, level: 2, completedLevels: [...prev.completedLevels, 1] }));
@@ -376,15 +378,37 @@ export default function App() {
               {/* Main Grid */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 <div className="lg:col-span-8">
-                  <QuestionCard 
-                    step={currentStep} 
-                    language={user.language!}
-                    onAnswer={handleAnswer} 
-                    onNext={handleNextStep}
-                    topicTitle={currentTopic.title}
-                    level={user.level}
-                    feedback={feedback}
-                  />
+                  {currentStep ? (
+                    <QuestionCard 
+                      step={currentStep} 
+                      language={user.language!}
+                      onAnswer={handleAnswer} 
+                      onNext={handleNextStep}
+                      topicTitle={currentTopic.title}
+                      level={user.level}
+                      feedback={feedback}
+                    />
+                  ) : (
+                    <motion.div 
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="bg-white p-12 rounded-[3rem] shadow-xl text-center border-4 border-primary/5"
+                    >
+                      <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                        <Trophy className="w-10 h-10 text-primary" />
+                      </div>
+                      <h2 className="text-3xl font-headline font-black text-on-surface mb-4">Level Complete!</h2>
+                      <p className="text-outline mb-8 max-w-md mx-auto">
+                        You've mastered all the content for this level. More challenges are coming soon!
+                      </p>
+                      <button 
+                        onClick={() => setCurrentView("curriculum")}
+                        className="bg-primary text-white px-8 py-4 rounded-full font-headline font-bold shadow-lg shadow-primary/20 hover:scale-105 transition-transform"
+                      >
+                        Back to Curriculum
+                      </button>
+                    </motion.div>
+                  )}
                 </div>
 
                 <div className="lg:col-span-4">

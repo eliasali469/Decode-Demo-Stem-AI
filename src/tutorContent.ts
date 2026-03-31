@@ -99,6 +99,45 @@ export const PHYSICS_LESSON: Record<number, LessonStep[]> = {
       },
     },
   ],
+  2: [
+    {
+      type: "challenge",
+      content: {
+        english: "Physics Level 2! Let's talk about Force.",
+        mixed: "Physics Level 2! Let's talk about Force.",
+        swahili: "Fizikia Level 2! Tuzungumzie Nguvu.",
+      },
+      question: {
+        text: "What is a Force?",
+        options: ["A push or pull", "A type of food", "A color", "A sound"],
+        correct: "A push or pull",
+      },
+    },
+    {
+      type: "explanation",
+      content: {
+        english: "A force is simply a push or a pull on an object. It can make things start moving, stop moving, or change direction.",
+        mixed: "A force is simply a push or a pull on an object. It can make things start moving, stop moving, or change direction.",
+        swahili: "Nguvu ni kusukuma au kuvuta kitu. Inaweza kufanya vitu kuanza kusonga, kuacha kusonga, au kubadilisha mwelekeo.",
+      },
+    },
+    {
+      type: "analogy",
+      content: {
+        english: "Think of pushing a heavy wheelbarrow or pulling a goat on a rope. Both of these are examples of applying force!",
+        mixed: "Think of pushing a heavy wheelbarrow or pulling a goat on a rope. Both of these are examples of applying force!",
+        swahili: "Fikiria kusukuma mkokoteni mzito au kuvuta mbuzi kwa kamba. Mifano hii yote ni ya kutumia nguvu!",
+      },
+    },
+    {
+      type: "complete",
+      content: {
+        english: "Fantastic! You've mastered the basics of Force. You're becoming a real physicist!",
+        mixed: "Fantastic! You've mastered the basics of Force. You're becoming a real physicist!",
+        swahili: "Ajabu! Umemaliza misingi ya Nguvu. Unakuwa mwanafizikia wa kweli!",
+      },
+    },
+  ],
 };
 
 export const BIOLOGY_LESSON: Record<number, LessonStep[]> = {
@@ -138,6 +177,45 @@ export const BIOLOGY_LESSON: Record<number, LessonStep[]> = {
         english: "Fantastic! You've learned the basics of the cell. Ready for more?",
         mixed: "Fantastic! You've learned the basics of the cell. Ready for more?",
         swahili: "Ajabu! Umejifunza misingi ya seli. Je, uko tayari kwa zaidi?",
+      },
+    },
+  ],
+  2: [
+    {
+      type: "challenge",
+      content: {
+        english: "Level 2 Biology! Let's talk about the Cell Wall.",
+        mixed: "Level 2 Biology! Let's talk about the Cell Wall.",
+        swahili: "Biolojia Level 2! Tuzungumzie Ukuta wa Seli.",
+      },
+      question: {
+        text: "Which of these has a Cell Wall?",
+        options: ["Plants", "Humans", "Cats", "Dogs"],
+        correct: "Plants",
+      },
+    },
+    {
+      type: "explanation",
+      content: {
+        english: "Plant cells have a tough outer layer called a Cell Wall. It helps the plant stand up straight without a skeleton!",
+        mixed: "Plant cells have a tough outer layer called a Cell Wall. It helps the plant stand up straight without a skeleton!",
+        swahili: "Seli za mmea zina tabaka gumu la nje linaloitwa Ukuta wa Seli. Inasaidia mmea kusimama wima bila mifupa!",
+      },
+    },
+    {
+      type: "analogy",
+      content: {
+        english: "Think of a Cell Wall like the stone walls of a traditional boma. It keeps everything inside safe and gives the structure its shape!",
+        mixed: "Think of a Cell Wall like the stone walls of a traditional boma. It keeps everything inside safe and gives the structure its shape!",
+        swahili: "Fikiria Ukuta wa Seli kama kuta za mawe za boma la jadi. Inalinda kila kitu ndani na kukipa muundo sura yake!",
+      },
+    },
+    {
+      type: "complete",
+      content: {
+        english: "Amazing! You've completed Biology Level 2!",
+        mixed: "Amazing! You've completed Biology Level 2!",
+        swahili: "Ajabu! Umemaliza Biolojia Level 2!",
       },
     },
   ],
